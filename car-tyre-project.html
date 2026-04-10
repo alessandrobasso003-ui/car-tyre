@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Car Tyre – Materials Towards Circular Economy | Group 5</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --dark: #1a1f2e;
+      --darker: #13171f;
+      --card: #232a3b;
+      --accent: #e63946;
+      --accent2: #4cc9f0;
+      --green: #2dc653;
+      --yellow: #f4d03f;
+      --text: #e8eaf0;
+      --muted: #8892a4;
+      --border: #2e3650;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--darker); color: var(--text); line-height: 1.6; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 999;
+      background: rgba(19,23,31,0.97);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0;
+      padding: 0 2rem; height: 56px;
+    }
+    .nav-logo { font-weight: 800; font-size: 1rem; color: var(--accent); margin-right: 2rem; white-space: nowrap; }
+    .nav-links { display: flex; gap: 0; flex-wrap: wrap; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.82rem;
+      padding: 0 0.9rem; height: 56px; display: flex; align-items: center;
+      border-bottom: 2px solid transparent; transition: all .2s;
+      white-space: nowrap;
+    }
+    .nav-links a:hover { color: var(--text); border-bottom-color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 50%, #0f1923 100%);
+      padding: 5rem 2rem 4rem;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(230,57,70,0.12) 0%, transparent 60%);
+    }
+    .hero-tag {
+      display: inline-block; background: var(--accent); color: #fff;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 2px;
+      padding: 4px 14px; border-radius: 2px; margin-bottom: 1.5rem;
+      text-transform: uppercase;
+    }
+    .hero h1 { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 900; letter-spacing: -1px; line-height: 1.05; }
+    .hero h1 span { color: var(--accent); }
+    .hero-sub { font-size: 1.15rem; color: var(--muted); margin: 1rem 0 2rem; }
+    .hero-meta { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 2rem; }
+    .hero-meta-item { text-align: center; }
+    .hero-meta-item .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+    .hero-meta-item .value { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+    .team-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 2rem; }
+    .team-chip {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 6px 16px; font-size: 0.83rem; color: var(--text);
+    }
+
+    /* AGENDA */
+    .agenda { background: var(--dark); padding: 3rem 2rem; }
+    .agenda-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; max-width: 960px; margin: 2rem auto 0; }
+    .agenda-item {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1.2rem 1.4rem;
+      display: flex; align-items: flex-start; gap: 1rem;
+    }
+    .agenda-num { font-size: 2rem; font-weight: 900; color: var(--accent); opacity: .4; line-height: 1; }
+    .agenda-title { font-size: 0.88rem; font-weight: 600; }
+
+    /* SECTIONS */
+    section { padding: 4rem 2rem; }
+    section:nth-child(even) { background: var(--dark); }
+    .section-inner { max-width: 1000px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 3px;
+      color: var(--accent); text-transform: uppercase; margin-bottom: 0.4rem;
+    }
+    h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; margin-bottom: 1.5rem; }
+    h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.7rem; color: var(--accent2); }
+    p { color: var(--muted); margin-bottom: 1rem; }
+
+    /* CARDS */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; margin-top: 1.5rem; }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.5rem;
+    }
+    .card-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+    .card-value { font-size: 1.8rem; font-weight: 800; color: var(--accent2); }
+    .card-unit { font-size: 0.8rem; color: var(--muted); }
+    .card-label { font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem; }
+
+    /* FUNCTIONAL UNIT TABLE */
+    .fu-table { width: 100%; border-collapse: collapse; margin-top: 1.2rem; }
+    .fu-table td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .fu-table td:first-child { color: var(--muted); width: 50%; }
+    .fu-table td:last-child { font-weight: 600; }
+
+    /* MATERIAL TABLE */
+    .mat-table { width: 100%; border-collapse: collapse; margin-top: 1.2rem; font-size: 0.85rem; }
+    .mat-table th { background: var(--border); color: var(--accent2); padding: 0.7rem 0.8rem; text-align: right; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .mat-table th:first-child { text-align: left; }
+    .mat-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border); text-align: right; }
+    .mat-table td:first-child { text-align: left; color: var(--text); font-weight: 500; }
+    .mat-table tr:hover td { background: rgba(255,255,255,0.03); }
+    .badge { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 0.72rem; font-weight: 700; }
+    .badge-green { background: rgba(45,198,83,0.15); color: var(--green); }
+    .badge-yellow { background: rgba(244,208,63,0.15); color: var(--yellow); }
+    .badge-red { background: rgba(230,57,70,0.15); color: var(--accent); }
+
+    /* COMPONENT BOXES */
+    .comp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .comp-box { border-radius: 8px; padding: 1.2rem 1.4rem; border-left: 4px solid; }
+    .comp-box.blue { background: rgba(76,201,240,0.08); border-color: var(--accent2); }
+    .comp-box.green { background: rgba(45,198,83,0.08); border-color: var(--green); }
+    .comp-box.purple { background: rgba(147,51,234,0.08); border-color: #9333ea; }
+    .comp-box.orange { background: rgba(249,115,22,0.08); border-color: #f97316; }
+    .comp-box h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .comp-box p { font-size: 0.82rem; margin: 0; color: var(--muted); }
+
+    /* CHARTS */
+    .chart-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+    .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; }
+    .chart-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 1rem; color: var(--text); }
+    .chart-wrap { position: relative; height: 220px; }
+
+    /* SOLUTIONS */
+    .solution-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.8rem; margin-bottom: 1.5rem;
+    }
+    .solution-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; }
+    .aspect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.8rem; }
+    .aspect-item { border-radius: 6px; padding: 0.9rem 1rem; }
+    .aspect-item.tech { background: rgba(76,201,240,0.1); border-left: 3px solid var(--accent2); }
+    .aspect-item.econ { background: rgba(45,198,83,0.1); border-left: 3px solid var(--green); }
+    .aspect-item.env { background: rgba(45,198,83,0.08); border-left: 3px solid #86efac; }
+    .aspect-item.crit { background: rgba(230,57,70,0.1); border-left: 3px solid var(--accent); }
+    .aspect-item .tag { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem; }
+    .aspect-item p { font-size: 0.8rem; margin: 0; color: var(--muted); }
+
+    /* REFERENCES */
+    .ref-list { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem; }
+    .ref-item {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1rem 1.2rem;
+      display: flex; flex-direction: column; gap: 0.2rem;
+    }
+    .ref-name { font-weight: 700; font-size: 0.9rem; color: var(--text); }
+    .ref-link { font-size: 0.8rem; color: var(--accent2); text-decoration: none; word-break: break-all; }
+    .ref-link:hover { text-decoration: underline; }
+    .ref-nolink { font-size: 0.82rem; color: var(--muted); font-style: italic; }
+
+    /* FOOTER */
+    footer {
+      background: #0d1117; border-top: 1px solid var(--border);
+      text-align: center; padding: 2rem;
+      font-size: 0.82rem; color: var(--muted);
+    }
+    footer strong { color: var(--text); }
+
+    /* MARKET PIE ROW */
+    .pie-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    @media (max-width: 640px) {
+      .pie-row { grid-template-columns: 1fr; }
+      nav { padding: 0 1rem; }
+      .nav-links a { padding: 0 0.5rem; font-size: 0.75rem; }
+    }
+
+    /* TYRE COMPOSITION */
+    .tyre-comp { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    @media (max-width: 640px) { .tyre-comp { grid-template-columns: 1fr; } }
+    .tyre-col { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.4rem; }
+    .tyre-col h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 1rem; }
+    .tyre-col.conv h4 { color: var(--yellow); }
+    .tyre-col.fuel h4 { color: var(--green); }
+    .tyre-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid var(--border); font-size: 0.83rem; }
+    .tyre-row:last-child { border-bottom: none; }
+
+    /* HIGHLIGHT BOX */
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(230,57,70,0.12), rgba(76,201,240,0.08));
+      border: 1px solid rgba(230,57,70,0.3); border-radius: 10px; padding: 1.5rem; margin-bottom: 2rem;
+    }
+    .highlight-box p { color: var(--text); margin: 0; font-size: 0.95rem; font-style: italic; }
+
+    /* SIE table row color */
+    .sie-green td { background: rgba(45,198,83,0.08); }
+    .sie-yellow td { background: rgba(244,208,63,0.08); }
+    .sie-red td { background: rgba(230,57,70,0.08); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">🚗 CAR TYRE</div>
+  <div class="nav-links">
+    <a href="#product">Product</a>
+    <a href="#market">Market</a>
+    <a href="#materials">Materials</a>
+    <a href="#sustainability">Sustainability</a>
+    <a href="#solutions">Solutions</a>
+    <a href="#references">References</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Group Project · A.Y. 2025–26</div>
+  <h1>CAR <span>TYRE</span></h1>
+  <p class="hero-sub">Materials Towards Circular Economy</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <div class="label">Group</div>
+      <div class="value">Group 5</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="label">Subject</div>
+      <div class="value">Eco Audit · LCA</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="label">Academic Year</div>
+      <div class="value">2025–2026</div>
+    </div>
+  </div>
+  <div class="team-chips">
+    <div class="team-chip">Tommaso Angrisano</div>
+    <div class="team-chip">Alessandro Basso</div>
+    <div class="team-chip">Giovanni Maricone</div>
+    <div class="team-chip">Alessandro Spadoni</div>
+    <div class="team-chip">Alfonso Vullo</div>
+  </div>
+</div>
+
+<!-- AGENDA -->
+<div class="agenda">
+  <div class="section-inner">
+    <div class="section-label">Overview</div>
+    <h2>Agenda</h2>
+    <div class="agenda-grid">
+      <div class="agenda-item"><div class="agenda-num">01</div><div class="agenda-title">Product Description: Uses &amp; Properties</div></div>
+      <div class="agenda-item"><div class="agenda-num">02</div><div class="agenda-title">Market Analysis</div></div>
+      <div class="agenda-item"><div class="agenda-num">03</div><div class="agenda-title">Materials &amp; Components Analysis</div></div>
+      <div class="agenda-item"><div class="agenda-num">04</div><div class="agenda-title">Sustainability Indicators &amp; Criticalities</div></div>
+      <div class="agenda-item"><div class="agenda-num">05</div><div class="agenda-title">Eco Audit: Life Cycle Phases</div></div>
+      <div class="agenda-item"><div class="agenda-num">06</div><div class="agenda-title">Possible Solutions</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 1: PRODUCT -->
+<section id="product">
+  <div class="section-inner">
+    <div class="section-label">Section 01</div>
+    <h2>Product Description</h2>
+    <div class="highlight-box">
+      <p>A rubber component mounted on the wheel rim that ensures contact between the vehicle and the road, providing <strong>mobility, grip, stability, and safety</strong> under different driving conditions.</p>
+    </div>
+    <h3>Functional Unit</h3>
+    <p>The provision of safe road mobility for a 1,500 kg standard passenger vehicle over 40,000 km under normal driving conditions in Italy, using one set of four basic all-season tyres, over a reference period of 4 years.</p>
+    <table class="fu-table">
+      <tr><td>Reference distance</td><td>40,000 km</td></tr>
+      <tr><td>Avg. time to cover distance</td><td>4 years</td></tr>
+      <tr><td>Avg. trip length</td><td>9.2 km</td></tr>
+      <tr><td>Main trip purpose</td><td>Work-related trips</td></tr>
+      <tr><td>Vehicle type</td><td>Standard passenger car — 1,500 kg</td></tr>
+      <tr><td>Tyre type</td><td>All-season, one set of four</td></tr>
+      <tr><td>Geographic reference</td><td>Italy, 2021–2025</td></tr>
+    </table>
+
+    <h3 style="margin-top:2rem;">Main Components</h3>
+    <div class="comp-grid">
+      <div class="comp-box blue">
+        <h4>Main Body</h4>
+        <p>The bulk of the tyre made of rubber compounds. Provides structure and allows the tyre to flex while resisting wear.</p>
+      </div>
+      <div class="comp-box green">
+        <h4>Innerliner</h4>
+        <p>A thin, airtight rubber layer on the inside of the tyre. Keeps air pressure stable over time.</p>
+      </div>
+      <div class="comp-box purple">
+        <h4>Reinforcements</h4>
+        <p>The structural "skeleton" made of steel cord &amp; textile fibres. Provides stiffness, shape, and improves stability and puncture resistance.</p>
+      </div>
+      <div class="comp-box orange">
+        <h4>Curing &amp; Key Chemicals</h4>
+        <p>Small-added ingredients used during manufacturing to enable vulcanization (crosslinking) and control the final properties.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: MARKET -->
+<section id="market">
+  <div class="section-inner">
+    <div class="section-label">Section 02</div>
+    <h2>Market Analysis</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <div class="card-value">143</div>
+        <div class="card-unit">USD Billion</div>
+        <div class="card-label">2024 Global Market Size</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <div class="card-value">174</div>
+        <div class="card-unit">USD Billion</div>
+        <div class="card-label">2030 Projected Market Size</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <div class="card-value">3.4%</div>
+        <div class="card-unit">CAGR 2025–2030</div>
+        <div class="card-label">Moderate Steady Growth</div>
+      </div>
+    </div>
+
+    <div class="chart-row" style="margin-top:2rem;">
+      <div class="chart-card">
+        <h4>Market Share — Key Players (%)</h4>
+        <div class="chart-wrap">
+          <canvas id="marketShareChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h4>OEM vs. Replacement Market</h4>
+        <div class="chart-wrap">
+          <canvas id="oemChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:2rem;">Dominant Markets</h3>
+    <div class="card-grid">
+      <div class="card">
+        <h4 style="color:var(--accent2);margin-bottom:.4rem;">🌏 Asia Pacific</h4>
+        <p style="font-size:.83rem;">Dominates with 44.3% revenue share in 2024. Driven by China, India, Japan, and Southeast Asia expansion.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent2);margin-bottom:.4rem;">🇪🇺 Europe</h4>
+        <p style="font-size:.83rem;">Driven by technological advancements and the increasing adoption of smart tyre solutions.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent2);margin-bottom:.4rem;">🇺🇸 USA</h4>
+        <p style="font-size:.83rem;">Expanding automotive industry, rising vehicle ownership, and growth of e-commerce driving demand.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: MATERIALS -->
+<section id="materials">
+  <div class="section-inner">
+    <div class="section-label">Section 03</div>
+    <h2>Materials &amp; Components Analysis</h2>
+
+    <h3>Tyre Composition by Weight</h3>
+    <div class="tyre-comp">
+      <div class="tyre-col conv">
+        <h4>⚙️ Conventional Tyre (8.6 kg)</h4>
+        <div class="tyre-row"><span>Natural Rubber (NR)</span><span>1.628 kg</span></div>
+        <div class="tyre-row"><span>Styrene-Butadiene Rubber (SBR)</span><span>1.604 kg</span></div>
+        <div class="tyre-row"><span>Butadiene Rubber (BR)</span><span>0.688 kg</span></div>
+        <div class="tyre-row"><span>Butyl Rubber (IIR)</span><span>0.255 kg</span></div>
+        <div class="tyre-row"><span>Carbon Black (industrial)</span><span>2.087 kg</span></div>
+        <div class="tyre-row"><span>Silica (96%)</span><span>0.042 kg</span></div>
+        <div class="tyre-row"><span>High-carbon steel (AISI 1080)</span><span>0.960 kg</span></div>
+        <div class="tyre-row"><span>PET (polyester cord)</span><span>0.292 kg</span></div>
+        <div class="tyre-row"><span>Polyamide fiber (Nylon-6)</span><span>0.125 kg</span></div>
+        <div class="tyre-row"><span>Sulfur (alpha)</span><span>0.125 kg</span></div>
+        <div class="tyre-row"><span>Zinc oxide (ZnO)</span><span>0.125 kg</span></div>
+      </div>
+      <div class="tyre-col fuel">
+        <h4>🌿 Fuel-Efficient Tyre (8.2 kg)</h4>
+        <div class="tyre-row"><span>Natural Rubber (NR)</span><span>1.742 kg</span></div>
+        <div class="tyre-row"><span>Styrene-Butadiene Rubber (SBR)</span><span>1.268 kg</span></div>
+        <div class="tyre-row"><span>Butadiene Rubber (BR)</span><span>0.543 kg</span></div>
+        <div class="tyre-row"><span>Butyl Rubber (IIR)</span><span>0.201 kg</span></div>
+        <div class="tyre-row"><span>Carbon Black (industrial)</span><span>1.551 kg</span></div>
+        <div class="tyre-row"><span>Silica (96%)</span><span>0.635 kg</span></div>
+        <div class="tyre-row"><span>High-carbon steel (AISI 1080)</span><span>0.886 kg</span></div>
+        <div class="tyre-row"><span>PET (polyester cord)</span><span>0.210 kg</span></div>
+        <div class="tyre-row"><span>Polyamide fiber (Nylon-6)</span><span>0.090 kg</span></div>
+        <div class="tyre-row"><span>Sulfur (alpha)</span><span>0.094 kg</span></div>
+        <div class="tyre-row"><span>Zinc oxide (ZnO)</span><span>0.128 kg</span></div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:2.5rem;">Material Properties (per kg)</h3>
+    <div style="overflow-x:auto;">
+      <table class="mat-table">
+        <thead>
+          <tr>
+            <th>Material</th>
+            <th>Embodied Energy (MJ/kg)</th>
+            <th>Carbon Footprint (kg CO₂/kg)</th>
+            <th>Water Usage (l/kg)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Natural Rubber (NR)</td><td>77.433</td><td>1.9527</td><td>17,321</td></tr>
+          <tr><td>Styrene-Butadiene Rubber (SBR)</td><td>71.14</td><td>1.4631</td><td>28.79</td></tr>
+          <tr><td>Butadiene Rubber (BR)</td><td>83.011</td><td>3.9001</td><td>27.965</td></tr>
+          <tr><td>Carbon Black (industrial)</td><td>24.323</td><td>0.26668</td><td>7.3907</td></tr>
+          <tr><td>Silica (96%)</td><td>38.572</td><td>2.188</td><td>3.1111</td></tr>
+          <tr style="background:rgba(230,57,70,0.07)"><td>Butyl Rubber (IIR)</td><td>92.07</td><td>4.314</td><td>110.4</td></tr>
+          <tr><td>AISI 1080 (plain carbon, 0.8%)</td><td>18.97</td><td>1.436</td><td>45.74</td></tr>
+          <tr><td>PET unfilled, semi-crystalline</td><td>72.6</td><td>2.68</td><td>133</td></tr>
+          <tr style="background:rgba(244,208,63,0.07)"><td>Polyamide fiber (Nylon-6)</td><td>132</td><td>7.69</td><td>265</td></tr>
+          <tr><td>Sulfur, alpha (S)</td><td>4.21</td><td>0.245</td><td>27</td></tr>
+          <tr><td>ZnO zinc oxide</td><td>51.3</td><td>2.89</td><td>276.37</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="chart-row" style="margin-top:2rem;">
+      <div class="chart-card">
+        <h4>Embodied Energy by Material (MJ/kg)</h4>
+        <div class="chart-wrap"><canvas id="eeChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>Carbon Footprint by Material (kg CO₂/kg)</h4>
+        <div class="chart-wrap"><canvas id="cfChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: SUSTAINABILITY -->
+<section id="sustainability">
+  <div class="section-inner">
+    <div class="section-label">Section 04</div>
+    <h2>Sustainability Indicators &amp; Criticalities</h2>
+    <p>The Sustainability Impact Equivalent (SIE) combines carbon footprint, water usage, and recycling fraction to identify the most critical materials from an environmental standpoint.</p>
+
+    <div style="overflow-x:auto;">
+      <table class="mat-table">
+        <thead>
+          <tr>
+            <th>Material</th>
+            <th>Carbon Footprint (kg CO₂/kg)</th>
+            <th>Water Usage (l/kg)</th>
+            <th>Recycle Fraction (%)</th>
+            <th>SIE</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="sie-green"><td>AISI 1080 (plain carbon)</td><td>1.436</td><td>45.74</td><td>51.94%</td><td>2.09E+01</td><td><span class="badge badge-green">Low</span></td></tr>
+          <tr class="sie-green"><td>PET unfilled, semi-crystalline</td><td>2.68</td><td>133</td><td>18.18%</td><td>6.85E+00</td><td><span class="badge badge-green">Low</span></td></tr>
+          <tr class="sie-red"><td>Polyamide fiber (Nylon-6)</td><td>7.69</td><td>265</td><td>0%</td><td>6.13E+04</td><td><span class="badge badge-red">Critical</span></td></tr>
+          <tr class="sie-yellow"><td>Sulfur, alpha (S)</td><td>0.245</td><td>27</td><td>0%</td><td>7.25E+01</td><td><span class="badge badge-yellow">Medium</span></td></tr>
+          <tr class="sie-yellow"><td>ZnO zinc oxide</td><td>2.89</td><td>276.37</td><td>0%</td><td>1.06E+02</td><td><span class="badge badge-yellow">Medium</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid" style="margin-top:2rem;">
+      <div class="card" style="border-top:3px solid var(--accent);">
+        <div class="card-icon">⚠️</div>
+        <h4 style="color:var(--accent);margin-bottom:.4rem;">Nylon-6 (Critical)</h4>
+        <p style="font-size:.82rem;">Highest SIE (6.13×10⁴). Very high carbon footprint (7.69 kg CO₂/kg), high water usage (265 l/kg), and <strong>0% recycled content</strong>.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--yellow);">
+        <div class="card-icon">💧</div>
+        <h4 style="color:var(--yellow);margin-bottom:.4rem;">Natural Rubber (Water)</h4>
+        <p style="font-size:.82rem;">Extremely high water usage: <strong>17,321 l/kg</strong> — driven by the agricultural nature of rubber tree cultivation.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--yellow);">
+        <div class="card-icon">🏭</div>
+        <h4 style="color:var(--yellow);margin-bottom:.4rem;">Butyl Rubber IIR</h4>
+        <p style="font-size:.82rem;">Highest embodied energy (92.07 MJ/kg) and highest carbon footprint (4.314 kg CO₂/kg) among all rubber compounds.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--accent2);">
+        <div class="card-icon">♻️</div>
+        <h4 style="color:var(--accent2);margin-bottom:.4rem;">AISI 1080 Steel (Best)</h4>
+        <p style="font-size:.82rem;">Best recyclability at <strong>51.94% recycled fraction</strong>. Lowest embodied energy (18.97 MJ/kg). Most circular material in the tyre.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: ECO AUDIT -->
+<section id="ecoaudit">
+  <div class="section-inner">
+    <div class="section-label">Section 05</div>
+    <h2>Eco Audit: Life Cycle Phases</h2>
+    <p>The Annual World Production (AWP) contextualizes each material's production volume to understand supply chain risks and environmental pressure at a global scale.</p>
+    <div style="overflow-x:auto;">
+      <table class="mat-table">
+        <thead>
+          <tr>
+            <th>Material</th>
+            <th>Embodied Energy (MJ/kg)</th>
+            <th>AWP 2021 (kg/yr)</th>
+            <th>AWP 2011 (kg/yr)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Natural Rubber (NR)</td><td>77.433</td><td>1.23E+10</td><td>1.15E+10</td></tr>
+          <tr><td>Styrene-Butadiene Rubber (SBR)</td><td>71.14</td><td>8.27E+09</td><td>5.40E+09</td></tr>
+          <tr><td>Butadiene Rubber (BR)</td><td>83.011</td><td>6.32E+09</td><td>3.12E+09</td></tr>
+          <tr><td>Carbon Black (industrial)</td><td>24.323</td><td>1.64E+09</td><td>8.10E+09</td></tr>
+          <tr><td>Silica (96%)</td><td>38.572</td><td>3.00E+11</td><td>1.38E+11</td></tr>
+          <tr><td>Butyl Rubber (IIR)</td><td>92.07</td><td>1.50E+09</td><td>9.50E+08</td></tr>
+          <tr><td>AISI 1080 (plain carbon)</td><td>18.97</td><td>3.87E+12</td><td>1.53E+12</td></tr>
+          <tr><td>PET unfilled, semi-crystalline</td><td>72.6</td><td>1.88E+10</td><td>1.97E+10</td></tr>
+          <tr><td>Polyamide fiber (Nylon-6)</td><td>132</td><td>3.90E+09</td><td>4.10E+09</td></tr>
+          <tr><td>Sulfur, alpha (S)</td><td>4.21</td><td>6.90E+10</td><td>5.10E+10</td></tr>
+          <tr><td>ZnO zinc oxide</td><td>51.3</td><td>2.36E+09</td><td>1.20E+09</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6: SOLUTIONS -->
+<section id="solutions">
+  <div class="section-inner">
+    <div class="section-label">Section 06</div>
+    <h2>Possible Solutions</h2>
+
+    <div class="solution-card">
+      <div class="solution-title">♻️ Solution 1 — Retread / Remanufacturing of the Casing</div>
+      <p style="margin-bottom:1rem;">Reusing the casing of the tyre and replacing only the worn part (mainly the tread). Retread uses less than one third of the raw materials needed for a new tyre.</p>
+      <div class="aspect-grid">
+        <div class="aspect-item tech">
+          <div class="tag" style="color:var(--accent2);">Technical</div>
+          <p>Does not require redesigning the tyre from scratch. Already established industrial technology, especially in the truck and fleet sector.</p>
+        </div>
+        <div class="aspect-item econ">
+          <div class="tag" style="color:var(--green);">Economic</div>
+          <p>Currently the most cost-effective solution. Avoids remanufacturing expensive materials such as Carbon Black, Silica, Nylon-6, and ZnO.</p>
+        </div>
+        <div class="aspect-item env">
+          <div class="tag" style="color:#86efac;">Environmental</div>
+          <p>Reduces both the use of virgin raw materials and the amount of tyre waste generated.</p>
+        </div>
+        <div class="aspect-item crit">
+          <div class="tag" style="color:var(--accent);">Critical Issues</div>
+          <p>Not all casings can be reused. An organized collection and inspection chain is required. Passenger car market perception is still weaker.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="solution-card">
+      <div class="solution-title">🖤 Solution 2 — Partial Replacement of Carbon Black with rCB</div>
+      <p style="margin-bottom:1rem;">Specific recycling of Carbon (industrial) — not reuse of the same tyre. rCB (recovered Carbon Black) is recovered from end-of-life tyres through pyrolysis or thermolysis.</p>
+      <div class="aspect-grid">
+        <div class="aspect-item tech">
+          <div class="tag" style="color:var(--accent2);">Technical</div>
+          <p>Does not require a complete redesign. Allows partial replacement of Carbon Black in selected compounds when formulation is properly optimized.</p>
+        </div>
+        <div class="aspect-item econ">
+          <div class="tag" style="color:var(--green);">Economic</div>
+          <p>Partial replacement can reduce costs, although actual benefit depends on quality, purity, post-treatments, and industrial scale.</p>
+        </div>
+        <div class="aspect-item env">
+          <div class="tag" style="color:#86efac;">Environmental</div>
+          <p>Reduces the use of virgin Carbon Black, increases material circularity, and upgrades end-of-life tyres into a secondary raw material.</p>
+        </div>
+        <div class="aspect-item crit">
+          <div class="tag" style="color:var(--accent);">Critical Issues</div>
+          <p>Main limits are quality variability, presence of ash/mineral residues, and reinforcing performance often lower than virgin material.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REFERENCES -->
+<section id="references" style="background:var(--dark);">
+  <div class="section-inner">
+    <div class="section-label">Sources</div>
+    <h2>References</h2>
+    <ul class="ref-list">
+      <li class="ref-item">
+        <span class="ref-name">Granta EduPack</span>
+        <span class="ref-nolink">Material properties database — Embodied Energy, Carbon Footprint, Water Usage, AWP data</span>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">Michelin / Georgia Tech — LCA Study</span>
+        <span class="ref-nolink">Environmental comparison of Michelin Tweel and pneumatic tire using life cycle assessment</span>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">Tyres Europe — Circularity and End-of-life</span>
+        <a class="ref-link" href="https://tyreseurope.org/circularity-and-end-of-life/" target="_blank">https://tyreseurope.org/circularity-and-end-of-life/</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">AidEnvironment — Natural Rubber</span>
+        <a class="ref-link" href="https://aidenvironment.org/wp-content/uploads/2024/06/ECF-Pilot-Report-3-Rubber.pdf" target="_blank">https://aidenvironment.org/wp-content/uploads/2024/06/ECF-Pilot-Report-3-Rubber.pdf</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">USGS — Sulfur Statistics and Information</span>
+        <a class="ref-link" href="https://usgs.gov/center/national-minerals-information-center/sulfur-statistics-and-information" target="_blank">https://usgs.gov/center/national-minerals-information-center/sulfur-statistics-and-information</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">Grand View Research — Tires Market Report</span>
+        <a class="ref-link" href="https://www.grandviewresearch.com/industry-analysis/tires-market-report" target="_blank">https://www.grandviewresearch.com/industry-analysis/tires-market-report</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">Verified Market Research — Largest Tire Manufacturers</span>
+        <a class="ref-link" href="https://www.verifiedmarketresearch.com/blog/largest-tire-manufacturers" target="_blank">https://www.verifiedmarketresearch.com/blog/largest-tire-manufacturers</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">USGS — Zinc Reserves (MCS 2022)</span>
+        <a class="ref-link" href="https://pubs.usgs.gov/periodicals/mcs2022/mcs2022-zinc.pdf" target="_blank">https://pubs.usgs.gov/periodicals/mcs2022/mcs2022-zinc.pdf</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">USGS — Sulfide Reserves (MCS 2022)</span>
+        <a class="ref-link" href="https://pubs.usgs.gov/periodicals/mcs2022/mcs2022-sulfur.pdf" target="_blank">https://pubs.usgs.gov/periodicals/mcs2022/mcs2022-sulfur.pdf</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">PMPA — AISI 1080 AWP 2011 (Steel Production)</span>
+        <a class="ref-link" href="https://www.pmpa.org/world-steel-production-2011-1-5-billion-tonnes/" target="_blank">https://www.pmpa.org/world-steel-production-2011-1-5-billion-tonnes/</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">FAOSTAT — AWP Rubber 2011</span>
+        <a class="ref-link" href="https://www.fao.org/faostat/en/#data/QCL" target="_blank">https://www.fao.org/faostat/en/#data/QCL</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">Wikipedia — AWP Styrene-Butadiene 2012</span>
+        <a class="ref-link" href="https://en.wikipedia.org/wiki/Styrene-butadiene" target="_blank">https://en.wikipedia.org/wiki/Styrene-butadiene</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">PRWeb — AWP Butadiene 2017</span>
+        <a class="ref-link" href="https://www.prweb.com/releases/global_polybutadiene_rubber_production_to_exceed_3_12_million_tonnes_by_2017_according_to_in_demand_report_by_merchant_research_consulting/prweb11724394.htm" target="_blank">https://www.prweb.com/releases/global_polybutadiene_rubber_production...</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">Wikipedia — AWP Carbon Black 2006</span>
+        <a class="ref-link" href="https://en.wikipedia.org/wiki/Carbon_black" target="_blank">https://en.wikipedia.org/wiki/Carbon_black</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">USGS / Palladium — Silica AWP 2011</span>
+        <a class="ref-link" href="https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/mineral-pubs/silica/myb1-2011-silic.pdf" target="_blank">https://d9-wret.s3.us-west-2.amazonaws.com/.../myb1-2011-silic.pdf</a>
+      </li>
+      <li class="ref-item">
+        <span class="ref-name">USGS Open-File Report — Sulfur AWP 2011</span>
+        <a class="ref-link" href="https://pubs.usgs.gov/of/2013/1091/OFR2013-1091.pdf" target="_blank">https://pubs.usgs.gov/of/2013/1091/OFR2013-1091.pdf</a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <strong>Car Tyre — Materials Towards Circular Economy</strong><br>
+  Group 5: Tommaso Angrisano · Alessandro Basso · Giovanni Maricone · Alessandro Spadoni · Alfonso Vullo<br>
+  A.Y. 2025–2026
+</footer>
+
+<!-- CHARTS SCRIPT -->
+<script>
+  const MUTED = '#8892a4';
+  const TEXT = '#e8eaf0';
+  const ACCENT = '#e63946';
+  const ACCENT2 = '#4cc9f0';
+  const GREEN = '#2dc653';
+  const YELLOW = '#f4d03f';
+
+  Chart.defaults.color = MUTED;
+  Chart.defaults.borderColor = '#2e3650';
+
+  const materials = ['Natural Rubber','SBR','Butadiene Rubber','Carbon Black','Silica','Butyl Rubber IIR','AISI 1080','PET','Nylon-6','Sulfur','ZnO'];
+  const colors = [GREEN, ACCENT2, '#9333ea', '#f97316', '#f4d03f', ACCENT, '#60a5fa', '#34d399', '#fb923c', '#e879f9', '#a78bfa'];
+
+  // Market share bar chart
+  new Chart(document.getElementById('marketShareChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Michelin', 'Bridgestone', 'Goodyear', 'Continental', 'Pirelli'],
+      datasets: [{
+        label: 'Market Share (%)',
+        data: [10.2, 9.8, 7.4, 6.9, 4.1],
+        backgroundColor: [ACCENT, ACCENT2, YELLOW, GREEN, '#9333ea'],
+        borderRadius: 5
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { callback: v => v + '%' } }
+      }
+    }
+  });
+
+  // OEM vs Replacement doughnut
+  new Chart(document.getElementById('oemChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Replacement Market', 'OEM'],
+      datasets: [{ data: [63, 37], backgroundColor: [ACCENT2, ACCENT], borderWidth: 0 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: { callbacks: { label: ctx => ctx.label + ': ' + ctx.raw + '%' } }
+      }
+    }
+  });
+
+  // EE bar chart
+  new Chart(document.getElementById('eeChart'), {
+    type: 'bar',
+    data: {
+      labels: materials,
+      datasets: [{
+        label: 'EE (MJ/kg)',
+        data: [77.433, 71.14, 83.011, 24.323, 38.572, 92.07, 18.97, 72.6, 132, 4.21, 51.3],
+        backgroundColor: colors, borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true } }
+    }
+  });
+
+  // Carbon footprint bar chart
+  new Chart(document.getElementById('cfChart'), {
+    type: 'bar',
+    data: {
+      labels: materials,
+      datasets: [{
+        label: 'kg CO₂/kg',
+        data: [1.9527, 1.4631, 3.9001, 0.26668, 2.188, 4.314, 1.436, 2.68, 7.69, 0.245, 2.89],
+        backgroundColor: colors, borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true } }
+    }
+  });
+</script>
+</body>
+</html>
